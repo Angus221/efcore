@@ -168,6 +168,22 @@ FROM [Orders] AS [o]
 LEFT JOIN [Alphabetical list of products] AS [a] ON [o].[CustomerID] = [a].[CategoryName]");
         }
 
+        public override void Collection_correlated_with_keyless_entity_in_predicate_works()
+        {
+            base.Collection_correlated_with_keyless_entity_in_predicate_works();
+
+            AssertSql(
+                @"@__p_0='2'
+
+SELECT TOP(@__p_0) [p].[ProductID], [p].[ProductName]
+FROM [Products] AS [p]
+WHERE ([p].[Discontinued] <> CAST(1 AS bit)) AND EXISTS (
+    SELECT 1
+    FROM [Order Details] AS [o]
+    WHERE [o].[ProductID] = [p].[ProductID])
+ORDER BY [p].[ProductID]");
+        }
+
         private void AssertSql(params string[] expected)
             => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 

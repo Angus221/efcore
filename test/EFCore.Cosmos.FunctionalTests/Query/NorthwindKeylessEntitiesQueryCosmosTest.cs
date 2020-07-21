@@ -137,6 +137,14 @@ WHERE (c[""Discriminator""] = ""Customer"")");
             AssertSql(@"");
         }
 
+        [ConditionalFact(Skip = "Issue #20441")]
+        public override void Collection_correlated_with_keyless_entity_in_predicate_works()
+        {
+            base.Collection_correlated_with_keyless_entity_in_predicate_works();
+
+            AssertSql(@"");
+        }
+
         private void AssertSql(params string[] expected)
             => Fixture.TestSqlLoggerFactory.AssertBaseline(expected);
 

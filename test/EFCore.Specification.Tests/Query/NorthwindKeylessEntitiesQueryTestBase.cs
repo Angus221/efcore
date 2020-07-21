@@ -199,5 +199,20 @@ namespace Microsoft.EntityFrameworkCore.Query
 
             Assert.Equal(830, results.Count);
         }
+
+        [ConditionalFact]
+        public virtual void Collection_correlated_with_keyless_entity_in_predicate_works()
+        {
+            using var context = CreateContext();
+
+            var results = context.Set<ProductQuery>()
+                .Where(pv => context.Set<OrderDetail>().Where(od => od.ProductID == pv.ProductID).Any())
+                .Select(pv => new { pv.ProductID, pv.ProductName })
+                .OrderBy(x => x.ProductID)
+                .Take(2)
+                .ToList();
+
+            Assert.Equal(2, results.Count);
+        }
     }
 }
